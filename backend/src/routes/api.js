@@ -404,4 +404,118 @@ router.patch('/admin/shifts/:id/pay', verifyAdmin, async (req, res) => {
   }
 });
 
+
+// ==========================================
+// 5. ADMIN MANUAL TIME ENTRY & EDITING
+// ==========================================
+
+// Create a manual time log entry for an employee (e.g. forgot to clock in)
+router.post('/admin/logs', verifyAdmin, async (req, res) => {
+  const { user_id, clock_in, clock_out } = req.body;
+
+  if (!user_id || !clock_in || !clock_out) {
+    return res.status(400).json({ message: 'user_id, clock_in and clock_out are all required' });
+  }
+
+  const clockInTime = new Date(clock_in);
+  const clockOutTime = new Date(clock_out);
+
+  if (isNaN(clockInTime) || isNaN(clockOutTime)) {
+    return res.status(400).json({ message: 'Invalid date format for clock_in or clock_out' });
+  }
+
+  if (clockOutTime <= clockInTime) {
+    return res.status(400).json({ message: 'Clock-out must be after clock-in' });
+  }
+
+  try {
+    // Verify employee exists
+    const userCheck = await query('SELECT user_id, username FROM users WHERE user_id = $1 AND role = $2', [user_id, 'employee']);
+    if (userCheck.rows.length === 0) {
+      return res.status(404).json({ message: 'Employee not found' });
+    }
+
+    // Check for any overlapping open (active) log for this employee
+    const activeLog = await query(
+      'SELECT log_id FROM time_logs WHERE user_id = $1 AND clock_out IS NULL',
+      [user_id]
+    );
+    if (activeLog.rows.length > 0) {
+      return res.status(400).json({ message: 'Employee has an active open shift. Please clock them out first.' });
+    }
+
+    // Calculate total hours
+    const diffMs = clockOutTime - clockInTime;
+    const totalHours = Number((diffMs / (1000 * 60 * 60)).toFixed(4));
+
+    await query(
+      'INSERT INTO time_logs (user_id, clock_in, clock_out, total_hours, payment_status) VALUES ($1, $2, $3, $4, $5)',
+      [user_id, clockInTime.toISOString(), clockOutTime.toISOString(), totalHours, 'pending']
+    );
+
+    return res.status(201).json({
+      message: `Manual entry created for ${userCheck.rows[0].username}: ${totalHours.toFixed(2)} hours logged.`
+    });
+  } catch (error) {
+    console.error('Admin manual log creation error:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Edit an existing time log's clock-in and/or clock-out (admin correction)
+router.patch('/admin/logs/:id', verifyAdmin, async (req, res) => {
+  const logId = req.params.id;
+  const { clock_in, clock_out } = req.body;
+
+  if (!clock_in && !clock_out) {
+    return res.status(400).json({ message: 'At least one of clock_in or clock_out is required' });
+  }
+
+  try {
+    // Fetch existing log
+    const logResult = await query('SELECT * FROM time_logs WHERE log_id = $1', [logId]);
+    if (logResult.rows.length === 0) {
+      return res.status(404).json({ message: 'Time log not found' });
+    }
+
+    const existingLog = logResult.rows[0];
+
+    // Use new values or fall back to existing
+    const newClockIn = clock_in ? new Date(clock_in) : new Date(existingLog.clock_in);
+    const newClockOut = clock_out ? new Date(clock_out) : (existingLog.clock_out ? new Date(existingLog.clock_out) : null);
+
+    if (isNaN(newClockIn)) {
+      return res.status(400).json({ message: 'Invalid clock_in date format' });
+    }
+
+    if (newClockOut && isNaN(newClockOut)) {
+      return res.status(400).json({ message: 'Invalid clock_out date format' });
+    }
+
+    if (newClockOut && newClockOut <= newClockIn) {
+      return res.status(400).json({ message: 'Clock-out must be after clock-in' });
+    }
+
+    // Recalculate total hours if both timestamps are present
+    let totalHours = null;
+    if (newClockOut) {
+      const diffMs = newClockOut - newClockIn;
+      totalHours = Number((diffMs / (1000 * 60 * 60)).toFixed(4));
+    }
+
+    await query(
+      'UPDATE time_logs SET clock_in = $1, clock_out = $2, total_hours = $3 WHERE log_id = $4',
+      [newClockIn.toISOString(), newClockOut ? newClockOut.toISOString() : null, totalHours, logId]
+    );
+
+    return res.json({
+      message: `Log #${logId} updated successfully. ${totalHours !== null ? `Total hours: ${totalHours.toFixed(2)} hrs` : ''}`.trim()
+    });
+  } catch (error) {
+    console.error('Admin edit log error:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
 module.exports = router;
+

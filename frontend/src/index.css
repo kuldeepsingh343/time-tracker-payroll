@@ -1273,3 +1273,27 @@ tr:hover td {
     padding: 0.5rem;
   }
 }
+
+/* Hours Preview Badge (Manual Entry / Edit Modal) */
+.hours-preview {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(99, 102, 241, 0.08);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  color: #a5b4fc;
+  padding: 0.65rem 1rem;
+  border-radius: var(--border-radius-md);
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.hours-preview strong {
+  color: #ffffff;
+}
+
+/* Datetime-local input color fix for dark theme */
+input[type="datetime-local"] {
+  color-scheme: dark;
+}
+
