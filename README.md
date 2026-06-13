@@ -2,6 +2,8 @@
 
 A secure, responsive full-stack web application designed for shared kiosk operations (ideal for iPad/tablet terminals), individual employee timesheets, and administrator payroll controls.
 
+![Chronos Dashboard Screenshot](./dashboard_screenshot.png)
+
 ## 🚀 Features
 
 - **Shared Kiosk Terminal:** A grid roster showing all employee profiles. Quick buttons allow employees to Clock In or Clock Out. Actions are secured via individual passwords and verified using bcrypt hashing on the backend.
