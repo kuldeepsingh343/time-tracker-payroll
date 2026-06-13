@@ -7,7 +7,7 @@
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
     "seed": "node src/db/seed.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node src/db/test-integration.js"
   },
   "keywords": [],
   "author": "",
