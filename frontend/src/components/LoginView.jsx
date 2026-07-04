@@ -63,7 +63,7 @@ const LoginView = () => {
             </svg>
           </div>
           <h2>Sign In</h2>
-          <p>Access your private timesheet or management board</p>
+          <p>Access your Karma Chakra timesheet or management board</p>
         </div>
 
         <form onSubmit={handleSubmit}>
@@ -119,13 +119,7 @@ const LoginView = () => {
           </button>
         </form>
 
-        <div className="login-footer">
-          <p>
-            Standard Test Credentials:<br />
-            <strong>Admin:</strong> admin1 / admin123<br />
-            <strong>Employee:</strong> john_doe / john123
-          </p>
-        </div>
+
       </div>
     </div>
   );
