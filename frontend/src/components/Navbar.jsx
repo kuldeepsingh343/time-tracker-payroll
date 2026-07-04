@@ -18,14 +18,16 @@ const Navbar = () => {
     <nav className="navbar glass-panel">
       <div className="navbar-container">
         <Link to="/" className="navbar-brand">
-          <div className="brand-icon">
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <circle cx="12" cy="12" r="10" />
-              <polyline points="12 6 12 12 16 14" />
-            </svg>
+          <img
+            src="/samaya-logo.png"
+            alt="Samaya Logo"
+            className="brand-logo-img"
+            style={{ height: '36px', width: 'auto', objectFit: 'contain' }}
+          />
+          <div className="brand-text-group">
+            <span className="brand-name">Samaya</span>
+            <span className="brand-subtitle">Precision Time &amp; Attendance</span>
           </div>
-          <span>Chronos</span>
-          <span className="brand-subtitle">Time & Payroll</span>
         </Link>
 
         <div className="navbar-links">

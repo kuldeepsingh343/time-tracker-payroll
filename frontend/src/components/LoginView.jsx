@@ -57,13 +57,13 @@ const LoginView = () => {
     <div className="login-container animate-slide-up">
       <div className="login-card glass-card">
         <div className="login-header">
-          <div className="login-icon-box">
-            <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-            </svg>
-          </div>
-          <h2>Sign In</h2>
-          <p>Access your Karma Chakra timesheet or management board</p>
+          <img
+            src="/samaya-logo.png"
+            alt="Samaya"
+            style={{ height: '80px', width: 'auto', objectFit: 'contain', marginBottom: '0.5rem' }}
+          />
+          <h2>Sign In to Samaya</h2>
+          <p>Precision Time &amp; Attendance management</p>
         </div>
 
         <form onSubmit={handleSubmit}>

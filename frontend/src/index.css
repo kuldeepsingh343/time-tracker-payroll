@@ -421,30 +421,39 @@ tr:hover td {
 .navbar-brand {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.6rem;
   font-weight: 700;
   font-size: 1.25rem;
   color: #ffffff;
   letter-spacing: -0.03em;
+  text-decoration: none;
 }
 
-.brand-icon {
+.brand-logo-img {
+  border-radius: 6px;
+  background: rgba(255,255,255,0.07);
+  padding: 2px;
+}
+
+.brand-text-group {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  background: var(--accent-gradient);
-  border-radius: var(--border-radius-sm);
+  flex-direction: column;
+  line-height: 1.15;
+}
+
+.brand-name {
+  font-size: 1.15rem;
+  font-weight: 800;
   color: #ffffff;
+  letter-spacing: 0.01em;
 }
 
 .brand-subtitle {
-  font-size: 0.75rem;
+  font-size: 0.68rem;
   color: var(--text-muted);
-  border-left: 1px solid var(--border-color);
-  padding-left: 0.5rem;
-  margin-left: 0.25rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-weight: 500;
 }
 
 .navbar-links {
