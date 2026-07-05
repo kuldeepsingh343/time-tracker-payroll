@@ -517,5 +517,55 @@ router.patch('/admin/logs/:id', verifyAdmin, async (req, res) => {
   }
 });
 
+// Reset a user's password (admin option)
+router.patch('/admin/users/:id/password', verifyAdmin, async (req, res) => {
+  const userId = req.params.id;
+  const { password } = req.body;
+
+  if (!password) {
+    return res.status(400).json({ message: 'Password is required' });
+  }
+
+  try {
+    // Check if user exists
+    const userCheck = await query('SELECT user_id, username FROM users WHERE user_id = $1', [userId]);
+    if (userCheck.rows.length === 0) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Hash new password securely
+    const passwordHash = await bcrypt.hash(password, 10);
+
+    await query('UPDATE users SET password_hash = $1 WHERE user_id = $2', [passwordHash, userId]);
+
+    return res.json({ message: `Password for ${userCheck.rows[0].username} has been successfully updated.` });
+  } catch (error) {
+    console.error('Admin password reset error:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Bulk mark shifts as paid
+router.patch('/admin/shifts/bulk-pay', verifyAdmin, async (req, res) => {
+  const { logIds } = req.body;
+
+  if (!logIds || !Array.isArray(logIds) || logIds.length === 0) {
+    return res.status(400).json({ message: 'logIds array is required and must not be empty' });
+  }
+
+  try {
+    // Update multiple logs in one query
+    const placeholders = logIds.map((_, index) => `$${index + 2}`).join(', ');
+    const sql = `UPDATE time_logs SET payment_status = $1 WHERE log_id IN (${placeholders})`;
+    
+    await query(sql, ['paid', ...logIds]);
+
+    return res.json({ message: `Successfully marked ${logIds.length} shifts as paid.` });
+  } catch (error) {
+    console.error('Admin bulk pay shifts error:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
 module.exports = router;
 
