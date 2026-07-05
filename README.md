@@ -1,129 +1,265 @@
-# Chronos Time-Tracking & Payroll Web Application
+<p align="center">
+  <img src="./docs/samaya-logo.png" alt="Samaya Logo" width="200"/>
+</p>
 
-A secure, responsive full-stack web application designed for shared kiosk operations (ideal for iPad/tablet terminals), individual employee timesheets, and administrator payroll controls.
+<h1 align="center">Samaya</h1>
+<p align="center"><strong>Precision Time & Attendance</strong></p>
 
-![Chronos Dashboard Screenshot](./dashboard_screenshot.png)
-
-## 🚀 Features
-
-- **Shared Kiosk Terminal:** A grid roster showing all employee profiles. Quick buttons allow employees to Clock In or Clock Out. Actions are secured via individual passwords and verified using bcrypt hashing on the backend.
-- **Passcode Touch-Pad:** An on-screen keypad optimized for touchscreen tablets (like iPads) alongside traditional keyboard input.
-- **Private Employee Dashboard:** Secure employee login showing accumulated pending and paid work hours/earnings with interactive timesheet history filtering.
-- **Admin Command Board:** 
-  - *Payroll Reconciliation:* Overview of total unpaid payouts. Tabular review of unpaid completed shifts with instantaneous status-updating buttons.
-  - *User Management:* CRUD forms for adding new staff profiles (role, hourly rates) and removing profiles.
+<p align="center">
+  <img src="https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react" />
+  <img src="https://img.shields.io/badge/Node.js-Express-339933?style=flat-square&logo=nodedotjs" />
+  <img src="https://img.shields.io/badge/Database-SQLite%20%7C%20PostgreSQL-003B57?style=flat-square&logo=sqlite" />
+  <img src="https://img.shields.io/badge/Auth-JWT%20%2B%20bcrypt-orange?style=flat-square" />
+  <img src="https://img.shields.io/badge/License-MIT-blue?style=flat-square" />
+</p>
 
 ---
 
-## 📁 Project Structure
+**Samaya** is a secure, full-stack **Time & Attendance** web application built for teams. It features a shared **Kiosk terminal** (perfect for tablets/iPads), private **Employee dashboards**, and a powerful **Admin control board** — including manual time correction and payroll reconciliation.
 
-```text
-time-tracker-payroll/
+---
+
+## ✨ Features
+
+### 🖥️ Shared Kiosk Mode
+- Live grid of all employees showing **Clocked In / Clocked Out** status
+- One-tap Clock In / Clock Out with a secure **PIN pad** (touchscreen optimised)
+- Password verified on the server with **bcrypt** — never sent in plain text
+
+### 👤 Employee Dashboard
+- View personal **pending and paid** hours & earnings
+- Full timesheet history with **date range filtering** (Today / Week / Month / All)
+- Real-time running clock while currently clocked in
+
+### 🛡️ Admin Command Board
+Three dedicated tabs for administrators:
+
+| Tab | Capability |
+|:----|:-----------|
+| **Payroll & Reconciliation** | View outstanding payouts per employee, mark shifts as paid, edit shift timestamps |
+| **✏️ Time Corrections** | Create manual shift entries for employees who forgot to clock in; edit any pending shift's clock-in/out times |
+| **User Roster Manager** | Add new employees or admins (with role & hourly rate), delete accounts |
+
+### 🔐 Security
+- JWT-based session management (stored in localStorage)
+- All admin routes protected server-side by role verification middleware
+- Passwords hashed with **bcrypt** (saltRounds = 10)
+
+---
+
+## 🗂️ Project Structure
+
+```
+samaya/
 ├── backend/
 │   ├── src/
 │   │   ├── config/
-│   │   │   └── db.js          # Unified SQLite & PostgreSQL adapter
+│   │   │   └── db.js           # Unified SQLite & PostgreSQL adapter
 │   │   ├── db/
-│   │   │   ├── schema.sql     # Relational DB Schema
-│   │   │   └── seed.js        # Hashed password user seeder
+│   │   │   ├── schema.sql      # Relational DB schema
+│   │   │   └── seed.js         # Demo user seeder (hashed passwords)
 │   │   ├── middleware/
-│   │   │   └── auth.js        # JWT protection middleware
+│   │   │   └── auth.js         # JWT auth & role-guard middleware
 │   │   ├── routes/
-│   │   │   └── api.js         # API Route controllers
-│   │   └── index.js           # Express server entry point
-│   ├── .env                   # Environment config (defaults to SQLite)
+│   │   │   └── api.js          # All REST API endpoints
+│   │   └── index.js            # Express server entry point
+│   ├── .env                    # Local environment config
+│   ├── .env.example            # Environment variable template
 │   └── package.json
 ├── frontend/
+│   ├── public/
+│   │   └── samaya-logo.png     # App logo (favicon + navbar + login)
 │   ├── src/
-│   │   ├── components/        # Kiosk, Login, Employee & Admin view panels
+│   │   ├── components/
+│   │   │   ├── AdminDashboard.jsx
+│   │   │   ├── EmployeeDashboard.jsx
+│   │   │   ├── KioskView.jsx
+│   │   │   ├── LoginView.jsx
+│   │   │   └── Navbar.jsx
 │   │   ├── context/
-│   │   │   └── AuthContext.jsx# React Context for session management
-│   │   ├── App.css            # Unused default styles (cleared)
-│   │   ├── App.jsx            # Main app shell & React Router routes
-│   │   ├── index.css          # Custom visual styling & responsive design tokens
-│   │   └── main.jsx           # Vite entrypoint
-│   ├── package.json
+│   │   │   └── AuthContext.jsx # React Context + API fetch wrapper
+│   │   ├── App.jsx             # App shell & React Router routes
+│   │   ├── index.css           # Design system & component styles
+│   │   └── main.jsx            # Vite entry point
+│   ├── .env.example            # Frontend env variable template
 │   └── vite.config.js
-├── docker-compose.yml         # Containerized PostgreSQL service
-└── README.md                  # Setup & Usage Documentation
+├── docs/
+│   └── samaya-logo.png
+├── docker-compose.yml          # Optional PostgreSQL container
+└── README.md
 ```
 
 ---
 
-## 🛠️ Setup Instructions
+## 🚀 Quick Start (Local Development)
 
-### 1. Prerequisite
-Ensure you have **Node.js** (v16+) installed. Optionally, **Docker** is recommended if you wish to run PostgreSQL.
+### Prerequisites
+- **Node.js** v16 or higher
+- npm v8 or higher
 
-### 2. Database Modes
-The application supports **SQLite (Default - Zero Configuration)** and **PostgreSQL (Production-Ready)**.
+### 1. Clone the repository
 
-#### Option A: SQLite (Immediate running - Recommended for testing)
-No installation is required. The backend automatically initializes and seeds a local database file at `backend/src/db/local.db`.
-
-#### Option B: PostgreSQL
-1. Start the PostgreSQL container from the root directory:
-   ```bash
-   docker-compose up -d
-   ```
-2. Update the environment configuration in `backend/.env`:
-   ```env
-   DB_TYPE=postgres
-   DATABASE_URL=postgresql://postgres:postgres@localhost:5432/time_tracker
-   ```
-3. Run the schema seeder manually to create the tables in PostgreSQL:
-   ```bash
-   npm --prefix backend run seed
-   ```
-
----
-
-## 🏃 Running the Application
-
-### Step 1: Run the Backend Server
-Start the Express server on port `5001`:
 ```bash
+git clone https://github.com/kuldeepsingh343/time-tracker-payroll.git
+cd time-tracker-payroll
+```
+
+### 2. Install dependencies
+
+```bash
+# Install backend dependencies
+npm --prefix backend install
+
+# Install frontend dependencies
+npm --prefix frontend install
+```
+
+### 3. Configure the backend
+
+The backend defaults to **SQLite** (zero configuration — no database setup needed):
+
+```bash
+# backend/.env is pre-configured for SQLite
+# No changes needed for local development
+```
+
+> To use **PostgreSQL** instead, edit `backend/.env`:
+> ```env
+> DB_TYPE=postgres
+> DATABASE_URL=postgresql://user:password@localhost:5432/samaya
+> ```
+
+### 4. Seed demo accounts
+
+```bash
+npm --prefix backend run seed
+```
+
+### 5. Run the servers
+
+Open **two terminal windows**:
+
+```bash
+# Terminal 1 — Backend API (port 5001)
 npm --prefix backend run dev
-```
 
-### Step 2: Run the Frontend App
-Start the Vite development server on port `5173`:
-```bash
+# Terminal 2 — Frontend (port 5173)
 npm --prefix frontend run dev
 ```
-Open **[http://localhost:5173](http://localhost:5173)** in your browser.
+
+Open **[http://localhost:5173](http://localhost:5173)** in your browser. ✅
 
 ---
 
-## 🔑 Test Credentials (Seeded Automatically)
+## 🔑 Demo Accounts
 
-| Account Role | Username | Password/PIN | Hourly Rate |
-| :--- | :--- | :--- | :--- |
-| **Administrator** | `admin1` | `admin123` | *N/A* |
-| **Employee** | `john_doe` | `john123` | `$25.00` |
-| **Employee** | `jane_smith` | `jane123` | `$30.00` |
+> These are created automatically when you run `npm --prefix backend run seed`.
+
+| Role | Username | Password | Hourly Rate |
+|:-----|:---------|:---------|:------------|
+| Administrator | `admin1` | `admin123` | — |
+| Employee | `john_doe` | `john123` | $25.00/hr |
+| Employee | `jane_smith` | `jane123` | $30.00/hr |
 
 ---
 
-## 🔄 Verification Scenarios
+## 🌐 Production Deployment (Free Hosting)
 
-1. **Verify Clocking-In:**
-   - On the Kiosk view, click **Clock-In** under `jane_smith`.
-   - Enter password `jane123`.
-   - Verify that her card updates to "Clocked In" and a success toast appears.
-2. **Verify Clocking-Out & Calculations:**
-   - Since `john_doe` is clocked in, click **Clock-Out** under his name.
-   - Enter password `john123`.
-   - Verify that he is clocked out and a success toast displays his total hours (calculated as `(ClockOut - ClockIn) / 60 minutes`).
-3. **Verify Employee Dashboard:**
-   - Go to **Sign In** (top right) and log in with `john_doe` / `john123`.
-   - View your hours breakdown (Pending vs Paid) and logs. Toggle filters.
-4. **Verify Admin Dashboard:**
-   - Log out and sign in with `admin1` / `admin123`.
-   - Go to **Admin Board**. Check the outstanding payouts under **Payroll**.
-   - Check the **Unpaid completed shifts** list. Click **Mark Paid** next to a shift.
-   - Observe that the shift disappears, and the employee's payroll balance updates instantly.
-5. **Verify User Management:**
-   - On the **User Roster Manager** tab, create a new employee `bob_builder` with rate `22.50`.
-   - Check the Kiosk Mode roster -> `bob_builder` is instantly visible.
-   - In the Admin panel, delete `bob_builder` -> he is removed immediately.
+The recommended free stack is:
+
+```
+Browser → Vercel (Frontend) → Render (Backend) → Supabase (PostgreSQL)
+```
+
+### Step 1 — Database: Supabase
+
+1. Sign up at [supabase.com](https://supabase.com)
+2. Create a new project and save your password
+3. Go to **Settings → Database → Connection String (URI)** and copy it
+4. Open **SQL Editor**, paste `backend/src/db/schema.sql`, and run it
+5. Then run the contents of `backend/src/db/seed.js` as raw SQL to seed users
+
+### Step 2 — Backend: Render
+
+1. Sign up at [render.com](https://render.com) → **New Web Service**
+2. Connect your GitHub repo, set **Root Directory** to `backend`
+3. Set **Build Command** → `npm install`, **Start Command** → `npm start`
+4. Add Environment Variables:
+
+   | Key | Value |
+   |:----|:------|
+   | `DB_TYPE` | `postgres` |
+   | `DATABASE_URL` | *(Supabase connection URI)* |
+   | `JWT_SECRET` | *(any long random string)* |
+   | `PORT` | `5001` |
+
+5. Deploy — copy your Render URL (e.g. `https://samaya-api.onrender.com`)
+
+### Step 3 — Frontend: Vercel
+
+1. Sign up at [vercel.com](https://vercel.com) → **Add New Project**
+2. Import your GitHub repo, set **Root Directory** to `frontend`
+3. Add Environment Variable:
+
+   | Key | Value |
+   |:----|:------|
+   | `VITE_API_URL` | `https://samaya-api.onrender.com/api` |
+
+4. Deploy — your app is now live! 🎉
+
+> **Note:** Render's free tier sleeps after 15 minutes of inactivity. First request after sleep takes ~30s. Upgrade to the $7/month plan for always-on service.
+
+---
+
+## 🔌 API Endpoints
+
+### Auth
+| Method | Endpoint | Description |
+|:-------|:---------|:------------|
+| `POST` | `/api/auth/login` | Login, returns JWT |
+| `GET` | `/api/auth/me` | Get current user from token |
+
+### Kiosk (Public)
+| Method | Endpoint | Description |
+|:-------|:---------|:------------|
+| `GET` | `/api/kiosk/employees` | Get all employees with clock status |
+| `POST` | `/api/kiosk/clock` | Clock in/out (password verified) |
+
+### Employee (JWT Required)
+| Method | Endpoint | Description |
+|:-------|:---------|:------------|
+| `GET` | `/api/employee/dashboard` | Personal stats & timesheet logs |
+
+### Admin (JWT + Admin Role Required)
+| Method | Endpoint | Description |
+|:-------|:---------|:------------|
+| `GET` | `/api/admin/payroll` | All pending shifts & payroll summary |
+| `GET` | `/api/admin/users` | List all users |
+| `POST` | `/api/admin/users` | Create a new user |
+| `DELETE` | `/api/admin/users/:id` | Remove a user |
+| `PATCH` | `/api/admin/shifts/:id/pay` | Mark a shift as paid |
+| `POST` | `/api/admin/logs` | **Create manual shift entry** |
+| `PATCH` | `/api/admin/logs/:id` | **Edit shift clock-in/out times** |
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer | Technology |
+|:------|:-----------|
+| Frontend | React 18 + Vite, React Router v6, Vanilla CSS |
+| Backend | Node.js, Express.js |
+| Database | SQLite (dev) / PostgreSQL (prod) |
+| Auth | JWT (`jsonwebtoken`) + `bcryptjs` |
+| ORM/Query | Raw SQL with unified db adapter |
+| Hosting | Vercel (frontend), Render (backend), Supabase (DB) |
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License** — see the [LICENSE](./LICENSE) file for details.
+
+---
+
+<p align="center">Built with ❤️ — Samaya &copy; 2025</p>
