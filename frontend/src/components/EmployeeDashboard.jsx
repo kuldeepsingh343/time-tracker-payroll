@@ -61,7 +61,7 @@ const EmployeeDashboard = () => {
           </div>
           <div className="rate-card glass-card">
             <span className="rate-label">Hourly Rate</span>
-            <span className="rate-value">${summary.hourly_rate.toFixed(2)}/hr</span>
+            <span className="rate-value">${Number(summary.hourly_rate || 0).toFixed(2)}/hr</span>
           </div>
         </div>
       )}
@@ -78,8 +78,8 @@ const EmployeeDashboard = () => {
             </div>
             <div className="stat-data">
               <span className="stat-label">Pending Payout</span>
-              <h3 className="stat-value">${summary.pending_payout.toFixed(2)}</h3>
-              <span className="stat-sub">{summary.pending_hours.toFixed(2)} hours accumulated</span>
+              <h3 className="stat-value">${Number(summary.pending_payout || 0).toFixed(2)}</h3>
+              <span className="stat-sub">{Number(summary.pending_hours || 0).toFixed(2)} hours accumulated</span>
             </div>
           </div>
 
@@ -94,8 +94,8 @@ const EmployeeDashboard = () => {
             </div>
             <div className="stat-data">
               <span className="stat-label">Paid Earnings</span>
-              <h3 className="stat-value">${summary.paid_payout.toFixed(2)}</h3>
-              <span className="stat-sub">{summary.paid_hours.toFixed(2)} hours compensated</span>
+              <h3 className="stat-value">${Number(summary.paid_payout || 0).toFixed(2)}</h3>
+              <span className="stat-sub">{Number(summary.paid_hours || 0).toFixed(2)} hours compensated</span>
             </div>
           </div>
 
@@ -108,7 +108,7 @@ const EmployeeDashboard = () => {
             </div>
             <div className="stat-data">
               <span className="stat-label">Total Completed Hours</span>
-              <h3 className="stat-value">{(summary.pending_hours + summary.paid_hours).toFixed(2)} hrs</h3>
+              <h3 className="stat-value">{(Number(summary.pending_hours || 0) + Number(summary.paid_hours || 0)).toFixed(2)} hrs</h3>
               <span className="stat-sub">Lifetime logged work</span>
             </div>
           </div>

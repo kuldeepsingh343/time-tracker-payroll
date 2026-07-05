@@ -231,8 +231,8 @@ const AdminDashboard = () => {
     return new Date(isoString).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
   };
 
-  const totalOutstandingPayout = payrollSummary.reduce((acc, row) => acc + row.pending_payout, 0);
-  const totalOutstandingHours = payrollSummary.reduce((acc, row) => acc + row.pending_hours, 0);
+  const totalOutstandingPayout = payrollSummary.reduce((acc, row) => acc + Number(row.pending_payout || 0), 0);
+  const totalOutstandingHours = payrollSummary.reduce((acc, row) => acc + Number(row.pending_hours || 0), 0);
   const manualHrsPreview = calcHours(manualClockIn, manualClockOut);
   const editHrsPreview = calcHours(editClockIn, editClockOut);
 
@@ -375,11 +375,11 @@ const AdminDashboard = () => {
                         {payrollSummary.map((emp) => (
                           <tr key={emp.user_id}>
                             <td style={{ fontWeight: '600' }}>{emp.username}</td>
-                            <td>${emp.hourly_rate.toFixed(2)}/hr</td>
-                            <td>{emp.pending_hours.toFixed(2)} hrs</td>
-                            <td style={{ fontWeight: '600', color: emp.pending_payout > 0 ? 'var(--warning)' : 'inherit' }}>${emp.pending_payout.toFixed(2)}</td>
-                            <td>{emp.paid_hours.toFixed(2)} hrs</td>
-                            <td style={{ fontWeight: '600', color: 'var(--success)' }}>${emp.paid_payout.toFixed(2)}</td>
+                            <td>${Number(emp.hourly_rate || 0).toFixed(2)}/hr</td>
+                            <td>{Number(emp.pending_hours || 0).toFixed(2)} hrs</td>
+                            <td style={{ fontWeight: '600', color: emp.pending_payout > 0 ? 'var(--warning)' : 'inherit' }}>${Number(emp.pending_payout || 0).toFixed(2)}</td>
+                            <td>{Number(emp.paid_hours || 0).toFixed(2)} hrs</td>
+                            <td style={{ fontWeight: '600', color: 'var(--success)' }}>${Number(emp.paid_payout || 0).toFixed(2)}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -510,7 +510,7 @@ const AdminDashboard = () => {
                         <tr key={u.user_id}>
                           <td style={{ fontWeight: '600' }}>{u.username}</td>
                           <td><span className={`badge ${u.role === 'admin' ? 'badge-warning' : 'badge-success'}`}><span className="badge-dot"></span>{u.role}</span></td>
-                          <td>{u.role === 'admin' ? 'N/A' : `$${u.hourly_rate.toFixed(2)}/hr`}</td>
+                          <td>{u.role === 'admin' ? 'N/A' : `$${Number(u.hourly_rate || 0).toFixed(2)}/hr`}</td>
                           <td><button className="btn btn-danger btn-sm" disabled={u.user_id === currentAdmin.user_id} onClick={() => handleDeleteUser(u.user_id, u.username)}>Delete</button></td>
                         </tr>
                       ))}
