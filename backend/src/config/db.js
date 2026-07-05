@@ -1,5 +1,4 @@
 const pg = require('pg');
-const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const fs = require('fs');
 require('dotenv').config();
@@ -12,11 +11,12 @@ if (dbType === 'postgres') {
   const connectionString = process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/time_tracker';
   pgPool = new pg.Pool({
     connectionString,
-    ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false
+    ssl: { rejectUnauthorized: false } // standard ssl configuration for external postgres
   });
   console.log('Database connected: PostgreSQL');
 } else {
   // SQLite setup
+  const sqlite3 = require('sqlite3').verbose();
   const dbDir = path.join(__dirname, '..', 'db');
   if (!fs.existsSync(dbDir)) {
     fs.mkdirSync(dbDir, { recursive: true });
