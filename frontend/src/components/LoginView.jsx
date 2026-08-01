@@ -121,6 +121,16 @@ const LoginView = () => {
 
 
       </div>
+      <div style={{
+        textAlign: 'center',
+        marginTop: '1.5rem',
+        color: 'rgba(255, 255, 255, 0.4)',
+        fontSize: '0.875rem',
+        fontWeight: '300',
+        letterSpacing: '0.05em'
+      }}>
+        Made with ❤️ by Kuldeep Singh
+      </div>
     </div>
   );
 };
